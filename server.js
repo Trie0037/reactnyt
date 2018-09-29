@@ -16,9 +16,16 @@ if (process.env.NODE_ENV === "production") {
 app.use(routes);
 
 // Connect to the Mongo DB
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/reactnyt");
+
+ mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/reactnyt");
+ var connection = mongoose.connection;
+
+connection.once('open', () => {
+  console.log('connection is open!')
+  app.listen(PORT, function() {
+    console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
+  });
+})
 
 // Start the API server
-app.listen(PORT, function() {
-  console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
-});
+
