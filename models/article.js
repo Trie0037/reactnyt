@@ -3,26 +3,19 @@ const Schema = mongoose.Schema;
 
 // Create article schema
 var ArticleSchema = new Schema({
+  url: {
+    type: String,
+    required: true
+  },
   title: {
     type: String,
     required: true
   },
-  summary: {
-    type: String,
-    required: true
-  },
-  link: {
-    type: String,
-    required: true
-  },
-  saved: {
-    type: Boolean,
-    default: false
-  },
-  notes: [{
-     type: Schema.Types.ObjectId,
-     ref: "Note"
-  }]
+  date: {
+    type: Date,
+    default: Date.now
+    //required: true
+  }
 });
 
 // Create the Article model with the ArticleSchema

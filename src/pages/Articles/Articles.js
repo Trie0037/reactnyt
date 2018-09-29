@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import DeleteBtn from "../../components/DeleteBtn";
+import Results from "../../components/Results";
 import Jumbotron from "../../components/Jumbotron";
 import API from "../../utils/API";
 import { Link } from "react-router-dom";
@@ -7,33 +7,44 @@ import { Col, Row, Container } from "../../components/Grid";
 import { List, ListItem } from "../../components/List";
 import { Input, TextArea, FormBtn } from "../../components/Form";
 
-
-const API_KEY = "4fe0a632547348c5b8ab64696c41b719";
-
-  class Articles extends Component {
-  // getArticles = async () =>
-  //const api_call = await fetch("https://api.nytimes.com/svc/search/v2/articlesearch.json");
-  // const data = await api_call.json();
-
+class Articles extends Component {
   state = {
     articles: [],
     title: "",
-    author: "",
-    synopsis: "",
-    url: "https://api.nytimes.com/svc/search/v2/articlesearch.json"
+    startYear: "",
+    endYear: "",
+    article: "",
+    saved: ""
+  };
+
+  //Test NYT query working
+  queryTest = () => {
+    console.log("Pizza is great!");
+    API.queryNewYorkTimes()
+      .then(res => console.log("Response from NYT: ", res))
+      .catch(err => console.log(err));
   };
 
   componentDidMount() {
-    //fetch("https://api.nytimes.com/svc/search/v2/articlesearch.json");
     this.loadArticles();
   }
 
   loadArticles = () => {
     API.getArticles()
       .then(res =>
-        this.setState({ articles: res.data, title: "", author: "", synopsis: "" })
+        this.setState({
+          articles: res.data,
+          title: "",
+          startYear: "",
+          endYear: ""
+        })
       )
       .catch(err => console.log(err));
+  };
+
+  handleSaveButton = (event, articleData) => {
+    console.log(articleData);
+    API.saveArticle(articleData);
   };
 
   deleteArticle = id => {
@@ -51,13 +62,17 @@ const API_KEY = "4fe0a632547348c5b8ab64696c41b719";
 
   handleFormSubmit = event => {
     event.preventDefault();
-    if (this.state.title && this.state.author) {
-      API.saveArticle({
-        title: this.state.title,
-        author: this.state.author,
-        synopsis: this.state.synopsis
-      })
-        .then(res => this.loadArticles())
+    console.log("YOYOYO");
+    if (this.state.title && this.state.startYear && this.state.endYear) {
+      API.queryNewYorkTimes(
+        this.state.article,
+        this.state.startYear,
+        this.state.endYear
+      )
+        .then(res => {
+          this.setState({ articles: res.data.response.docs });
+          console.log("this.state.articles: ", this.state.articles);
+        })
         .catch(err => console.log(err));
     }
   };
@@ -68,7 +83,11 @@ const API_KEY = "4fe0a632547348c5b8ab64696c41b719";
         <Row>
           <Col size="md-6">
             <Jumbotron>
-              <h1>What Articles Should I Read?</h1>
+              <h1>
+                <strong>
+                  <i class="fa fa-newspaper-o" /> New York Times Search
+                </strong>
+              </h1>
             </Jumbotron>
             <form>
               <Input
@@ -78,45 +97,50 @@ const API_KEY = "4fe0a632547348c5b8ab64696c41b719";
                 placeholder="Title (required)"
               />
               <Input
-                value={this.state.author}
+                value={this.state.startYear}
                 onChange={this.handleInputChange}
-                name="author"
-                placeholder="Author (required)"
+                name="startYear"
+                placeholder="startYear (required)"
               />
-              <TextArea
-                value={this.state.synopsis}
+              <Input
+                value={this.state.endYear}
                 onChange={this.handleInputChange}
-                name="synopsis"
-                placeholder="Synopsis (Optional)"
+                name="endYear"
+                placeholder="endYear (Optional)"
               />
               <FormBtn
-                disabled={!(this.state.author && this.state.title)}
+                disabled={!(this.state.startYear && this.state.title)}
                 onClick={this.handleFormSubmit}
               >
                 Submit Article
               </FormBtn>
             </form>
+            {/* <FormBtn onClick={this.queryTest}>
+              
+                Check NYT API
+              </FormBtn> */}
           </Col>
           <Col size="md-6 sm-12">
             <Jumbotron>
-              <h1>Articles On My List</h1>
+              {this.state.articles.map(article => (
+                <div>
+                  {this.state.articles.length > 1 ? (
+                    <Results
+                      // apiresults={this.state.results}
+                      // handleClick={this.handleClick}
+                      url={article.web_url}
+                      title={article.headline.main}
+                      date={article.pub_date}
+                      key={article._id}
+                      _id={article._id}
+                      onChange={this.handleSaveButton}
+                    />
+                  ) : (
+                    <div />
+                  )}
+                </div>
+              ))}
             </Jumbotron>
-            {this.state.articles.length ? (
-              <List>
-                {this.state.articles.map(article => (
-                  <ListItem key={article._id}>
-                    <Link to={"/articles/" + article._id}>
-                      <strong>
-                        {article.title} by {article.author}
-                      </strong>
-                    </Link>
-                    <DeleteBtn onClick={() => this.deleteArticle(article._id)} />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <h3>No Results to Display</h3>
-            )}
           </Col>
         </Row>
       </Container>
