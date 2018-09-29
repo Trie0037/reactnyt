@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "concurrently \"node server.js\" \"cd client && npm run start\""
   },
   "repository": "https://github.com/Trie0037/reactnyt.git",
   "author": "Trie0037 <trie0037@gmail.com>",
