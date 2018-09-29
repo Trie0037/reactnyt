@@ -3,7 +3,7 @@
   "homepage": "https://trie0037.github.io/reactnyt/",
   "version": "0.1.0",
   "private": true,
-  "proxy": " https://reactnyt187.herokuapp.com/",
+  "proxy": "https://reactnyt187.herokuapp.com/",
   "dependencies": {
     "axios": "^0.18.0",
     "bootstrap": "^4.1.2",
