@@ -22,10 +22,11 @@ app.use(routes);
 
 connection.once('open', () => {
   console.log('connection is open!')
-  app.listen(PORT, function() {
-    console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
-  });
+
 })
 
 // Start the API server
 
+app.listen(PORT, function() {
+  console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
+});
