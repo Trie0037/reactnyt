@@ -85,7 +85,7 @@ class Articles extends Component {
             <Jumbotron>
               <h1>
                 <strong>
-                  <i class="fa fa-newspaper-o" /> New York Times Search
+                  <i className="fa fa-newspaper-o" /> New York Times Search
                 </strong>
               </h1>
             </Jumbotron>
